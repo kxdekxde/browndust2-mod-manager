@@ -659,6 +659,20 @@
     },
     {
         "character": "Loen",
+        "file_id": "char003201",
+        "costume": "Last Hope",
+        "type": "idle",
+        "hashed_name": ""
+    },
+    {
+        "character": "Loen",
+        "file_id": "char003201",
+        "costume": "Last Hope",
+        "type": "cutscene",
+        "hashed_name": "537cafcbb80a4169b187d30d1e3e5f90"
+    },
+    {
+        "character": "Loen",
         "file_id": "char003202",
         "costume": "Track and Field Team",
         "type": "idle",
@@ -726,6 +740,20 @@
         "costume": "Laid-back Lifeguard",
         "type": "cutscene",
         "hashed_name": "844f4f4b7a514ff4ace0943f392e633b"
+    },
+    {
+        "character": "Nebris",
+        "file_id": "char061303",
+        "costume": "Laid-back Lifeguard",
+        "type": "idle",
+        "hashed_name": ""
+    },
+    {
+        "character": "Nebris",
+        "file_id": "char061303",
+        "costume": "Laid-back Lifeguard",
+        "type": "cutscene",
+        "hashed_name": "9b0a0f0b8e7394d6b512ec7a62a7102f"
     },
     {
         "character": "Nebris",
