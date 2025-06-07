@@ -6,6 +6,7 @@ IMPORTANT: This mod manager works with a folder structure `mod author->mod subfo
 \linr熊\Celia_Bunny_Reverse_Cut\cutscene_char060403 (.atlas + .skel/.json + .png)
 ```
 
+
 ## Portable Version:
 If you don't want to install the stuff below to use the script you can download this portable version ready for usage.
 
