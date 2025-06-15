@@ -102,7 +102,6 @@ class SpineViewer(QWidget):
         self.setWindowTitle("Brown Dust II Mod Manager")
         self.setGeometry(100, 100, 1200, 800)
         self.viewer_controller = SpineViewerController()
-        self.all_mod_items = []  # To store all mod items for filtering
         self._character_data_cache = None  # Cache for character data
 
         # Apply Windows 11 dark theme
@@ -154,13 +153,24 @@ class SpineViewer(QWidget):
         # Create table widget for mods list
         self.table_widget = QTableWidget()
         self.table_widget.setColumnCount(6)
-        self.table_widget.setHorizontalHeaderLabels(["Author", "Character", "Costume", "Type", "Status", "Actions"])
-        self.table_widget.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.ResizeToContents)
-        self.table_widget.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.ResizeToContents)
-        self.table_widget.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)
-        self.table_widget.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeMode.ResizeToContents)
-        self.table_widget.horizontalHeader().setSectionResizeMode(4, QHeaderView.ResizeMode.ResizeToContents)
-        self.table_widget.horizontalHeader().setSectionResizeMode(5, QHeaderView.ResizeMode.ResizeToContents)
+        
+        # Store original labels to manage sort indicators
+        self.original_header_labels = ["Author", "Character", "Costume", "Type", "Status", "Actions"]
+        self.table_widget.setHorizontalHeaderLabels(self.original_header_labels)
+        self.table_widget.setSortingEnabled(True)
+        
+        # Connect signal to update header with sort arrows
+        header = self.table_widget.horizontalHeader()
+        header.sortIndicatorChanged.connect(self.update_header_sort_indicator)
+        
+        # Configure column resize modes
+        header.setSectionResizeMode(0, QHeaderView.ResizeMode.Interactive)  # Author
+        header.setSectionResizeMode(1, QHeaderView.ResizeMode.Interactive)  # Character
+        header.setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)     # Costume
+        header.setSectionResizeMode(3, QHeaderView.ResizeMode.Interactive)  # Type
+        header.setSectionResizeMode(4, QHeaderView.ResizeMode.Interactive)  # Status
+        header.setSectionResizeMode(5, QHeaderView.ResizeMode.ResizeToContents)  # Actions
+        
         self.table_widget.verticalHeader().setVisible(False)
         self.table_widget.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
         self.table_widget.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
@@ -170,6 +180,27 @@ class SpineViewer(QWidget):
 
         self.verify_mods_folder()
         self.folder_edit.textChanged.connect(self.folder_path_changed)
+
+    def update_header_sort_indicator(self, column_index, order):
+        """Update header text to show a sort order arrow."""
+        # First, reset all headers to their original text
+        for i in range(len(self.original_header_labels)):
+            header_item = self.table_widget.horizontalHeaderItem(i)
+            if header_item:
+                header_item.setText(self.original_header_labels[i])
+        
+        # If sorting is disabled (index is -1), we are done.
+        if column_index == -1:
+            return
+
+        # Append an arrow to the header of the currently sorted column
+        header_item = self.table_widget.horizontalHeaderItem(column_index)
+        if header_item:
+            original_text = self.original_header_labels[column_index]
+            if order == Qt.SortOrder.AscendingOrder:
+                header_item.setText(f"{original_text} ▲")
+            elif order == Qt.SortOrder.DescendingOrder:
+                header_item.setText(f"{original_text} ▼")
 
     def set_windows11_dark_theme(self):
         """Apply Windows 11 style dark theme to the application"""
@@ -586,25 +617,66 @@ class SpineViewer(QWidget):
             self.load_mods()
 
     def load_mods(self):
+        # Fix: Reset sorting to default before reloading to prevent refresh issues.
+        self.table_widget.sortByColumn(-1, Qt.SortOrder.AscendingOrder)
+        
         mods_folder = self.settings.get("mods_folder", "")
         self.table_widget.setRowCount(0)
-        self.all_mod_items = []
         
         if mods_folder and os.path.exists(mods_folder):
             # First get all author folders
             author_folders = [f for f in os.listdir(mods_folder) 
                             if os.path.isdir(os.path.join(mods_folder, f)) and not f.startswith('.')]
             
+            # Track maximum content widths for fixed columns
+            max_author_width = 0
+            max_character_width = 0
+            max_type_width = 0
+            max_status_width = 0
+            
+            # First pass: Calculate maximum content widths
+            temp_font = self.table_widget.font()
+            temp_fm = self.table_widget.fontMetrics()
+            
+            for author in author_folders:
+                author_path = os.path.join(mods_folder, author)
+                subfolders = [f for f in os.listdir(author_path) 
+                             if os.path.isdir(os.path.join(author_path, f)) and not f.startswith('.')]
+                
+                for subfolder in subfolders:
+                    subfolder_path = os.path.join(author_path, subfolder)
+                    char_info = self.get_character_display_info(subfolder_path, subfolder)
+                    
+                    # Calculate required widths
+                    author_width = temp_fm.horizontalAdvance(author) + 20  # + padding
+                    char_width = temp_fm.horizontalAdvance(char_info['character']) + 20
+                    type_width = temp_fm.horizontalAdvance(char_info['type']) + 20
+                    status_width = temp_fm.horizontalAdvance("Active") + 20  # "Active" is longer than "Inactive"
+                    
+                    if author_width > max_author_width:
+                        max_author_width = author_width
+                    if char_width > max_character_width:
+                        max_character_width = char_width
+                    if type_width > max_type_width:
+                        max_type_width = type_width
+                    if status_width > max_status_width:
+                        max_status_width = status_width
+            
+            # Second pass: Add rows with fixed column widths
             for author in sorted(author_folders):
                 author_path = os.path.join(mods_folder, author)
-                
-                # Get all character/costume subfolders
                 subfolders = [f for f in os.listdir(author_path) 
                              if os.path.isdir(os.path.join(author_path, f)) and not f.startswith('.')]
                 
                 for subfolder in sorted(subfolders):
                     subfolder_path = os.path.join(author_path, subfolder)
                     self.add_mod_row(author, subfolder, subfolder_path)
+            
+            # Set fixed column widths
+            self.table_widget.setColumnWidth(0, max_author_width)    # Author
+            self.table_widget.setColumnWidth(1, max_character_width) # Character
+            self.table_widget.setColumnWidth(3, max_type_width)      # Type
+            self.table_widget.setColumnWidth(4, max_status_width)    # Status
         
     def add_mod_row(self, author, subfolder, folder_path):
         row = self.table_widget.rowCount()
@@ -668,36 +740,37 @@ class SpineViewer(QWidget):
         action_layout.addWidget(open_btn)
         
         self.table_widget.setCellWidget(row, 5, action_widget)
-        
-        # Store additional properties for filtering
-        self.all_mod_items.append({
-            "row": row,
-            "author": author.lower(),
-            "character": char_info['character'].lower(),
-            "costume": char_info['costume'].lower(),
-            "type": char_info['type'].lower(),
-            "status": "active" if status_text == "Active" else "inactive"
-        })
 
     def filter_mods(self):
         search_text = self.search_edit.text().lower()
-        
+
         if not search_text:
             # Show all rows if search is empty
             for row in range(self.table_widget.rowCount()):
                 self.table_widget.setRowHidden(row, False)
             return
-            
-        # Hide rows that don't match the search
-        for item in self.all_mod_items:
-            row = item["row"]
-            matches = (
-                search_text in item["author"] or 
-                search_text in item["character"] or 
-                search_text in item["costume"] or
-                search_text in item["type"] or
-                search_text in item["status"]
+
+        for row in range(self.table_widget.rowCount()):
+            author_item = self.table_widget.item(row, 0)
+            character_item = self.table_widget.item(row, 1)
+            costume_item = self.table_widget.item(row, 2)
+            type_item = self.table_widget.item(row, 3)
+            status_item = self.table_widget.item(row, 4)
+
+            # Ensure all items exist before attempting to read text from them
+            if not all([author_item, character_item, costume_item, type_item, status_item]):
+                continue
+
+            # Concatenate all searchable text into one string for easy searching
+            row_text = (
+                author_item.text().lower() +
+                character_item.text().lower() +
+                costume_item.text().lower() +
+                type_item.text().lower() +
+                status_item.text().lower()
             )
+            
+            matches = search_text in row_text
             self.table_widget.setRowHidden(row, not matches)
 
     def clear_search(self):
@@ -740,12 +813,6 @@ class SpineViewer(QWidget):
                     else:
                         status_item.setForeground(QColor('#f48771'))  # Salmon for inactive
                     self.table_widget.setItem(row, 4, status_item)
-                    
-                    # Update the all_mod_items status
-                    for item in self.all_mod_items:
-                        if item["row"] == row:
-                            item["status"] = "active" if btn.text() == "Deactivate" else "inactive"
-                            break
                     break
                         
         except Exception as e:
