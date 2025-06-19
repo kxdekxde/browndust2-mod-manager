@@ -85,6 +85,20 @@
     },
     {
         "character": "Justia",
+        "file_id": "illust_dating7",
+        "costume": "Hot Summer Dream / DATING SIM",
+        "type": "idle",
+        "hashed_name": ""
+    },
+    {
+        "character": "Justia",
+        "file_id": "illust_dating7",
+        "costume": "Hot Summer Dream / DATING SIM",
+        "type": "cutscene",
+        "hashed_name": "dcde6611b3f7bc1adb9bb83c06f490cf"
+    },
+    {
+        "character": "Justia",
         "file_id": "char000201",
         "costume": "Knight of Blood",
         "type": "idle",
@@ -152,6 +166,20 @@
         "costume": "Pool Party",
         "type": "cutscene",
         "hashed_name": "537cafcbb80a4169b187d30d1e3e5f90"
+    },
+    {
+        "character": "Justia",
+        "file_id": "char000296",
+        "costume": "Hot Summer Dream",
+        "type": "idle",
+        "hashed_name": "dcde6611b3f7bc1adb9bb83c06f490cf"
+    },
+    {
+        "character": "Justia",
+        "file_id": "char000296",
+        "costume": "Hot Summer Dream",
+        "type": "cutscene",
+        "hashed_name": "dcde6611b3f7bc1adb9bb83c06f490cf"
     },
     {
         "character": "Scheherazade",
@@ -390,6 +418,20 @@
         "costume": "Beach Vacane",
         "type": "cutscene",
         "hashed_name": "757b3ca23889b4b77ff48523569f4932"
+    },
+    {
+        "character": "Eclipse",
+        "file_id": "char000708",
+        "costume": "Dream Bride",
+        "type": "idle",
+        "hashed_name": "dcde6611b3f7bc1adb9bb83c06f490cf"
+    },
+    {
+        "character": "Eclipse",
+        "file_id": "char000708",
+        "costume": "Dream Bride",
+        "type": "cutscene",
+        "hashed_name": "dcde6611b3f7bc1adb9bb83c06f490cf"
     },
     {
         "character": "Rubia",
@@ -1582,6 +1624,20 @@
         "hashed_name": "1aca0fada1e472a9e1d862118c75d168"
     },
     {
+        "character": "Refithea",
+        "file_id": "char066803",
+        "costume": "Poolside Fairy",
+        "type": "idle",
+        "hashed_name": "dcde6611b3f7bc1adb9bb83c06f490cf"
+    },
+    {
+        "character": "Refithea",
+        "file_id": "char066803",
+        "costume": "Poolside Fairy",
+        "type": "cutscene",
+        "hashed_name": "dcde6611b3f7bc1adb9bb83c06f490cf"
+    },
+    {
         "character": "Glacia",
         "file_id": "char066902",
         "costume": "Alice",
@@ -1821,6 +1877,20 @@
     },
     {
         "character": "Wilhelmina",
+        "file_id": "illust_dating6",
+        "costume": "Water Park Queen / DATING SIM",
+        "type": "idle",
+        "hashed_name": ""
+    },
+    {
+        "character": "Wilhelmina",
+        "file_id": "illust_dating6",
+        "costume": "Water Park Queen / DATING SIM",
+        "type": "cutscene",
+        "hashed_name": "dcde6611b3f7bc1adb9bb83c06f490cf"
+    },
+    {
+        "character": "Wilhelmina",
         "file_id": "char067601",
         "costume": "Iron Monarch",
         "type": "idle",
@@ -1832,6 +1902,20 @@
         "costume": "Iron Monarch",
         "type": "cutscene",
         "hashed_name": "fde8e34a41364648cb0d5e11fb868465"
+    },
+    {
+        "character": "Wilhelmina",
+        "file_id": "char067603",
+        "costume": "Water Park Queen",
+        "type": "idle",
+        "hashed_name": "dcde6611b3f7bc1adb9bb83c06f490cf"
+    },
+    {
+        "character": "Wilhelmina",
+        "file_id": "char067603",
+        "costume": "Water Park Queen",
+        "type": "cutscene",
+        "hashed_name": "dcde6611b3f7bc1adb9bb83c06f490cf"
     },
     {
         "character": "Gynt",
